@@ -34,8 +34,15 @@ const courseSchema = new Schema({
     },
     students_enrolled: [
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'UserSchema'
+            type: mongoose.Schema.Types.ObjectId,  // remaining if else in schema for checking educator h ya student 
+            ref: 'UserSchema',
+            unique: true
+        }
+    ],
+    assignments: [
+        {
+            type: mongoose.Schema.Types.ObjectId,   
+            ref: 'Assignment'
         }
     ]
    

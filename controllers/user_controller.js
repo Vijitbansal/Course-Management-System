@@ -1,3 +1,19 @@
+// REMAINING POINTS
+// check all messages and the flow 
+//user logout and delete remaining 
+//educator password to be hashed when eductor create it
+//logout for everyone - HW jwt token exire
+//HW middleware for type check of user (config new file)
+//
+//only admins can delete the user 
+
+//State Management of the course status
+// upcoming running completed
+// Updates to the course should not break the state
+// review given by educator as grades (in submission api)
+//open apis view assignment 
+
+
 const express = require("express")
 const User = require("../models/user")
 const jwt = require("jsonwebtoken");

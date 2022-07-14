@@ -4,19 +4,20 @@ const Schema = mongoose.Schema;
 
 const assignmentSchema = new Schema({
     course_id: {
-        type: ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
+        ref:'CourseSchema'
     },
     description: {
-        type: string,
+        type: String,
         required: true,
     },
     start_time: {
-        type: date,
+        type: Date,
         required: true,
 
     },end_time: {
-        type: date,
+        type: Date,
         required: true,
     }
 })
