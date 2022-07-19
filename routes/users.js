@@ -4,8 +4,9 @@ const user_controller =  require("../controllers/user_controller");
 const token_verification = require("../config/token_verification") //middleware used
 
 router.post("/login", user_controller.login);
-router.post("/logout", user_controller.logout);
+router.post("/signup", user_controller.signup);
+// router.post("/logout", user_controller.logout);
 router.post("/create",token_verification.checkAuthentication, user_controller.create);
-router.post("/delete",token_verification.checkAuthentication, user_controller.delete);
+router.post("/delete/:id",token_verification.checkAuthentication, user_controller.delete);
 
 module.exports = router;

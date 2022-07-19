@@ -1,7 +1,7 @@
 const express = require("express");
 const Assignment = require("../models/assignment");
 const route = express.Router()
-const Course = require("../models/assignment")
+const Course = require("../models/course")
 
 //create course 
 module.exports.create = async  (req, res)=> {
@@ -15,19 +15,25 @@ module.exports.create = async  (req, res)=> {
                 message:"Only educators can create assignment"
             })
         }
-
-            const{id,description,start_date,end_date} = req.body; 
-            console.log(id,"idddddddd");
+        const { course_id , description, start_time, end_time } = req.body ; 
+        let course = await Course.findById(course_id)
+        if(course){
+            console.log(req.body);
+            console.log(course_id,"idddddddd");
             let newAssignment = await Assignment.create({
-                id,
+                course_id,
                 description,
-                start_date,
-                end_date
+                start_time,
+                end_time
             });
+            if(newAssignment){
+                course.assignments.push(newAssignment);
+                course.save();
+            }
             return res.status(200).json({
                 message:"Assignment created successfully"
             })
-            
+        }
     } catch (err) {
         console.log(err,"errrrrrr");
         return res.status(500).json({

@@ -15,12 +15,12 @@ const assignmentSchema = new Schema({
     start_time: {
         type: Date,
         required: true,
-
-    },end_time: {
+    },
+    end_time: {
         type: Date,
         required: true,
     }
-})
+},{timestamp:true})
 
 const Assignment = mongoose.model("AssignmentSchema", assignmentSchema);
 

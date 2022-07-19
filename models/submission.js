@@ -4,24 +4,25 @@ const Schema = mongoose.Schema;
 
 const submissionSchema = new Schema({
     student_id: {
-        type: ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
     },
     assignment_id: {
-        type: ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
     },
     submission_time: {
-        type: date,
+        type: Date,
         required: true,
     },
     file_url: {
-        type: string, 
+        type: String, 
         required: true,
     },
     grade: {
-        type: string,
+        type: String,
         enum:['A', 'B', 'C','D','F'],
+        // default:"A",
         required: true,
     }
 })

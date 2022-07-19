@@ -44,7 +44,9 @@ module.exports.update = async function (req, res) {
       });
     }
     const { id } = req.params;
+    let today = new Date();
     let oldCourse = await Course.findById(id);
+    let new_state = ""
     console.log(oldCourse, "llllllllllllllll");
     if (oldCourse) {
       //aise hi if loops lgane hain ? for updating each and every thing ???
@@ -61,7 +63,27 @@ module.exports.update = async function (req, res) {
         oldCourse.start_date = req.body.start_date;
       }
       if (req.body.end_date) {
+        // if(req.body.end_date < today)
         oldCourse.end_date = req.body.end_date;
+      }
+      if(oldCourse.end_date < oldCourse.start_date){
+        return res.status(400).json({
+            message: "Course start date should not exceed course end date",
+          })
+      }
+      if(oldCourse.start_date > today){
+        new_state = "UPCOMING"
+      }
+      else if (oldCourse.end_date < today){
+        new_state = "COMPLETED"
+      }
+      else{
+        new_state = "RUNNING"
+      }
+      if(new_state!=oldCourse.state){
+        return res.status(400).json({
+            message: "Cannot update state of the course"
+          })
       }
       console.log(oldCourse, "Oooooooooooooo");
       // updates description/name, start_date, end_date

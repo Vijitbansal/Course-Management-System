@@ -10,7 +10,6 @@
 //State Management of the course status
 // upcoming running completed
 // Updates to the course should not break the state
-// review given by educator as grades (in submission api)
 //open apis view assignment 
 
 
@@ -35,11 +34,12 @@ module.exports.create = async function (req, res) {
                     message:"Admins cannot create students"
                 })
             }
-            let newUser = await User.create({
+            let pass = name+phone.substr(phone.length - 5);      
+                let newUser = await User.create({
                 name : name,
                 phone :phone,
                 type:type,
-                password:"password" 
+                password: Buffer.from(pass).toString('base64')
             });
             return res.status(201).json({
                 message:"Educator created successfully"
@@ -65,16 +65,17 @@ module.exports.login = async function (req, res) {
         const existUser = await User.findOne({ phone: phone });
         // console.log(existUser);
         if (!existUser) {
-            return res.status(400).json({ msg: "User does not exist." });
+            return res.status(400).json({ msg: "User does not exist" });
         }
         // const isMatch = await bcrypt.compare(password, existUser.password);
         // console.log(isMatch);
-        const isMatch = (password==existUser.password);
+        // buffer.from(password, 'base64').toString('ascii')
+        const isMatch = (password==Buffer.from(existUser.password, 'base64').toString('ascii'));
         if (!isMatch) {
             return res.status(400).json({ msg: "Invalid credentials." });
         }
         const secret="secret";
-        const token = jwt.sign({ id: existUser.id }, secret);
+        const token = jwt.sign({ id: existUser.id }, secret , {expiresIn:'2h'});
         return res.json({ token, user: { id: existUser.id, name: existUser.name } });
 
     } catch (err) {
@@ -82,11 +83,72 @@ module.exports.login = async function (req, res) {
         return res.status(400).json({ msg: "Login failed." });
     }
 }
+module.exports.signup = async function (req, res) {
+    try {
+        console.log(req.body,"**********");
+        const { name , phone, password } = req.body;
+        console.log(name,"****", phone, "*****", password);
+        if (!name || !phone || !password) {
+            return res.status(400).json({ msg: "All fields are required." });
+        }
+        const existUser = await User.findOne({ phone: phone });
+        if(existUser){
+            return res.status(400).json({ msg: "User already exist" });
+        }
+        // console.log(existUser);
+        // const isMatch = await bcrypt.compare(password, existUser.password);
+        // console.log(isMatch);
 
-module.exports.logout = function (req, res) {
-
+        const user = await User.create({
+            name,
+            phone,
+            password,
+            type: "STUDENT",
+            active:true
+        })
+       if(user){
+        req.user = user;
+        return res.status(200).json({
+            message:"Student created successfully",
+            data: user
+        })
+    }
+    return res.status(400).json({ msg: "User is not created" });
+    //    }
+    //     const isMatch = (password==existUser.password);
+    //     if (!isMatch) {
+    //         return res.status(400).json({ msg: "Invalid credentials." });
+    //     }
+    //     const secret="secret";
+    //     const token = jwt.sign({ id: existUser.id }, secret);
+    //     return res.json({ token, user: { id: existUser.id, name: existUser.name } });
+   }
+     catch (err) {
+        console.log(err);
+        return res.status(400).json({ msg: "User creation failed." });
+    }
 }
 
-module.exports.delete = function (req, res) {
 
+module.exports.delete = async function (req, res) {
+    try {
+        const is_valid_user =  req.user ;
+        if(is_valid_user.type!="ADMIN")
+        {
+            return res.status(403).json({
+                message:"You don't have permission to delete this user"
+            })
+        }
+        console.log(req.body,"**********");
+        const { id } = req.param;
+        const existUser = await User.deleteOne({ id });
+        // console.log(existUser);
+        if (!existUser) {
+            return res.status(400).json({ msg: "User does not exist" });
+        }
+        return res.status(200).json({ msg: "User deleted successfully" });
+    } catch (err) {
+        console.log(err);
+        return res.status(400).json({ msg: "Error in deleting user" });
+    }
 }
