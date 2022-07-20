@@ -18,7 +18,8 @@ module.exports.create = async function (req, res) {
                     message:"Admins cannot create students"
                 })
             }
-            let pass = name+phone.substr(phone.length - 5);      
+            let pass = name+phone.substr(phone.length - 5); 
+                console.log(pass,"passsssssssss")     
                 let newUser = await User.create({
                 name : name,
                 phone :phone,
@@ -76,7 +77,7 @@ module.exports.signup = async function (req, res) {
         const user = await User.create({
             name,
             phone,
-            password,
+            password:Buffer.from(password).toString('base64'),
             type: "STUDENT",
             active:true
         })

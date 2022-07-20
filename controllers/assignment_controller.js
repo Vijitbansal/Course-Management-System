@@ -41,7 +41,7 @@ module.exports.create = async  (req, res)=> {
 
 }
 
-//update course 
+//update assignment 
 module.exports.update = async function (req, res) {
     try {
         const is_valid_user =  req.user ;
@@ -60,7 +60,6 @@ module.exports.update = async function (req, res) {
                 if(req.body.description){
                     oldAssignment.description=req.body.description
                 }
-                console.log(oldAssignment,"Oooooooooooooo")
                 oldAssignment.save() // Description, end_date
 
                 return res.status(200).json({
@@ -82,16 +81,23 @@ module.exports.update = async function (req, res) {
 //delete assignment 
 module.exports.delete = async function (req, res) {
     try {
+        const is_valid_user =  req.user ;
+        if(is_valid_user.type!="EDUCATOR")
+        {
+            return res.status(403).json({
+                message:"Only educators can delete assignment"
+            })
+        }
         let assignment = await Assignment.findById(req.params.id);
         let course_id = assignment.course_id;
         if (assignment) {
             Assignment.remove();
             let course = await Course.findById(course_id);
-            let idx = Course.assignment.indexOf(req.params.id);
+            let idx = course.assignments.indexOf(req.params.id);
 
-            Course.assignment.splice(idx, 1);
-            Course.save();
-            assignment.save();
+            course.assignments.splice(idx, 1);
+            course.save();
+            assignment.delete();
         }
         return res.status(200).json({
             message:"Assignment deleted successfully"

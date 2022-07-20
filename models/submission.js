@@ -23,7 +23,7 @@ const submissionSchema = new Schema({
         type: String,
         enum:['A', 'B', 'C','D','F'],
         // default:"A",
-        required: true,
+        required: false,
     }
 })
 

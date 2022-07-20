@@ -5,8 +5,10 @@ const User = require("../models/user");
 
 //create course
 module.exports.create = async (req, res) => {
+  console.log("AAGYA")
   try {
     const is_valid_user = req.user;
+    console.log(is_valid_user,"dfjbdjbdjbkbekbf")
     if (is_valid_user.type != "EDUCATOR") {
       return res.status(403).json({
         message: "Only educators can create course",
@@ -18,6 +20,7 @@ module.exports.create = async (req, res) => {
       description,
       capacity,
       start_date,
+      // students_enrolled:"1",
       end_date,
     });
     return res.status(201).json({
@@ -43,8 +46,7 @@ module.exports.update = async function (req, res) {
     const { id } = req.params;
     let today = new Date();
     let oldCourse = await Course.findById(id);
-    let new_state = ""
-    console.log(oldCourse, "llllllllllllllll");
+    let new_status = ""
     if (oldCourse) {
       if (req.body.capacity) {
         oldCourse.capacity = req.body.capacity;
@@ -61,23 +63,24 @@ module.exports.update = async function (req, res) {
       if (req.body.end_date) {
         oldCourse.end_date = req.body.end_date;
       }
+
       if(oldCourse.end_date < oldCourse.start_date){
         return res.status(400).json({
             message: "Course start date should not exceed course end date",
           })
       }
       if(oldCourse.start_date > today){
-        new_state = "UPCOMING"
+        new_status = "UPCOMING"
       }
       else if (oldCourse.end_date < today){
-        new_state = "COMPLETED"
+        new_status = "COMPLETED"
       }
       else{
-        new_state = "RUNNING"
+        new_status = "RUNNING"
       }
-      if(new_state!=oldCourse.state){
+      if(new_status!=oldCourse.status){
         return res.status(400).json({
-            message: "Cannot update state of the course"
+            message: "Cannot update status of the course"
           })
       }
       console.log(oldCourse, "Oooooooooooooo");
@@ -129,8 +132,6 @@ module.exports.student_courses = async (req, res) => {
     let user_courses = await User.findById(req.params.id).populate(
       "course_enrolled")
     if(user_courses){
-        console.log(user_courses,"coursesssssssss");
-        console.log(user_courses.course_enrolled,"coursesssssssss");
         user_courses.course_enrolled.forEach((course) => {
 
           if (course.end_date > todayDate && course.start_date < todayDate) {
@@ -150,7 +151,6 @@ module.exports.student_courses = async (req, res) => {
           });
     }
   } catch (err) {
-    console.log(err, "errrrrrr");
     return res.status(500).json({
       message: "Some error occured",
     });
