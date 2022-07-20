@@ -6,17 +6,3 @@ wss.on('connection', ws => {
   })
   ws.send('Hello! Message From Server!!')
 })
-
-
-
-// var net = require('net');
-// var client = net.connect({port: 8080}, function() {
-//   // we can send data back
-//   client.write();
-// });
-// client.on('data', function(data) {
-//   // receive data here
-// });
-// client.on('end', function() {
-//   // we received a FIN packet
-// });

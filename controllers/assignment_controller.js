@@ -3,12 +3,10 @@ const Assignment = require("../models/assignment");
 const route = express.Router()
 const Course = require("../models/course")
 
-//create course 
+//create assignment 
 module.exports.create = async  (req, res)=> {
     try {
         const is_valid_user =  req.user ;
-        console.log(is_valid_user,"+++++++++++")
-        // console.log(is_valid_user,"#####");
         if(is_valid_user.type!="EDUCATOR")
         {
             return res.status(403).json({
@@ -47,7 +45,6 @@ module.exports.create = async  (req, res)=> {
 module.exports.update = async function (req, res) {
     try {
         const is_valid_user =  req.user ;
-        // console.log(is_valid_user,"#####");
         if(is_valid_user.type!="EDUCATOR")
         {
             return res.status(403).json({
@@ -56,7 +53,6 @@ module.exports.update = async function (req, res) {
         }
             const{id} = req.params;
             let oldAssignment = await Assignment.findById(id);
-            console.log(oldAssignment,"llllllllllllllll")
             if(oldAssignment){
                 if(req.body.end_date){
                     oldAssignment.end_date=req.body.end_date
@@ -106,5 +102,3 @@ module.exports.delete = async function (req, res) {
         return;
     }
 }
-
-//View all the submissions against an assignment

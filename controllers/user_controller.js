@@ -1,18 +1,3 @@
-// REMAINING POINTS
-// check all messages and the flow 
-//user logout and delete remaining 
-//educator password to be hashed when eductor create it
-//logout for everyone - HW jwt token exire
-//HW middleware for type check of user (config new file)
-//
-//only admins can delete the user 
-
-//State Management of the course status
-// upcoming running completed
-// Updates to the course should not break the state
-//open apis view assignment 
-
-
 const express = require("express")
 const User = require("../models/user")
 const jwt = require("jsonwebtoken");
@@ -21,7 +6,6 @@ const jwt = require("jsonwebtoken");
 module.exports.create = async function (req, res) {
     try {
         const is_valid_user =  req.user ;
-        // console.log(is_valid_user,"#####");
         if(is_valid_user.type!="ADMIN")
         {
             return res.status(403).json({
@@ -51,25 +35,19 @@ module.exports.create = async function (req, res) {
             message:"Some error occured"
         })
     }
-
 }
 
 module.exports.login = async function (req, res) {
     try {
-        console.log(req.body,"**********");
         const { phone, password } = req.body;
-        console.log("***", phone, "*****", password);
+        console.log("*****", phone, "*****", password);
         if (!phone || !password) {
             return res.status(400).json({ msg: "All fields are required." });
         }
         const existUser = await User.findOne({ phone: phone });
-        // console.log(existUser);
         if (!existUser) {
             return res.status(400).json({ msg: "User does not exist" });
         }
-        // const isMatch = await bcrypt.compare(password, existUser.password);
-        // console.log(isMatch);
-        // buffer.from(password, 'base64').toString('ascii')
         const isMatch = (password==Buffer.from(existUser.password, 'base64').toString('ascii'));
         if (!isMatch) {
             return res.status(400).json({ msg: "Invalid credentials." });
@@ -95,10 +73,6 @@ module.exports.signup = async function (req, res) {
         if(existUser){
             return res.status(400).json({ msg: "User already exist" });
         }
-        // console.log(existUser);
-        // const isMatch = await bcrypt.compare(password, existUser.password);
-        // console.log(isMatch);
-
         const user = await User.create({
             name,
             phone,
@@ -114,21 +88,12 @@ module.exports.signup = async function (req, res) {
         })
     }
     return res.status(400).json({ msg: "User is not created" });
-    //    }
-    //     const isMatch = (password==existUser.password);
-    //     if (!isMatch) {
-    //         return res.status(400).json({ msg: "Invalid credentials." });
-    //     }
-    //     const secret="secret";
-    //     const token = jwt.sign({ id: existUser.id }, secret);
-    //     return res.json({ token, user: { id: existUser.id, name: existUser.name } });
    }
      catch (err) {
         console.log(err);
         return res.status(400).json({ msg: "User creation failed." });
     }
 }
-
 
 module.exports.delete = async function (req, res) {
     try {
@@ -139,10 +104,8 @@ module.exports.delete = async function (req, res) {
                 message:"You don't have permission to delete this user"
             })
         }
-        console.log(req.body,"**********");
         const { id } = req.param;
         const existUser = await User.deleteOne({ id });
-        // console.log(existUser);
         if (!existUser) {
             return res.status(400).json({ msg: "User does not exist" });
         }

@@ -7,8 +7,6 @@ const User = require("../models/user");
 module.exports.create = async (req, res) => {
   try {
     const is_valid_user = req.user;
-    console.log(is_valid_user, "+++++++++++");
-    // console.log(is_valid_user,"#####");
     if (is_valid_user.type != "EDUCATOR") {
       return res.status(403).json({
         message: "Only educators can create course",
@@ -37,7 +35,6 @@ module.exports.create = async (req, res) => {
 module.exports.update = async function (req, res) {
   try {
     const is_valid_user = req.user;
-    // console.log(is_valid_user,"#####");
     if (is_valid_user.type != "EDUCATOR") {
       return res.status(403).json({
         message: "Only educators can update course",
@@ -49,7 +46,6 @@ module.exports.update = async function (req, res) {
     let new_state = ""
     console.log(oldCourse, "llllllllllllllll");
     if (oldCourse) {
-      //aise hi if loops lgane hain ? for updating each and every thing ???
       if (req.body.capacity) {
         oldCourse.capacity = req.body.capacity;
       }
@@ -63,7 +59,6 @@ module.exports.update = async function (req, res) {
         oldCourse.start_date = req.body.start_date;
       }
       if (req.body.end_date) {
-        // if(req.body.end_date < today)
         oldCourse.end_date = req.body.end_date;
       }
       if(oldCourse.end_date < oldCourse.start_date){
@@ -86,7 +81,6 @@ module.exports.update = async function (req, res) {
           })
       }
       console.log(oldCourse, "Oooooooooooooo");
-      // updates description/name, start_date, end_date
       oldCourse.save();
 
       return res.status(201).json({
@@ -126,20 +120,14 @@ module.exports.view_students = async (req, res) => {
   }
 };
 
-// Course.find({'status':{ $in : ['UPCOMING','RUNNING']}})
-
 module.exports.student_courses = async (req, res) => {
   try {
-    console.log("00000000000");
     upcoming_courses = [];
     running_courses = [];
     completed_courses = [];
     todayDate = new Date();
-    // let user = await User.findById(req.params.id)
-    // console.log(user,"8383883883coursesssssssss");
     let user_courses = await User.findById(req.params.id).populate(
       "course_enrolled")
-    // ).course_enrolled;
     if(user_courses){
         console.log(user_courses,"coursesssssssss");
         console.log(user_courses.course_enrolled,"coursesssssssss");
@@ -161,8 +149,6 @@ module.exports.student_courses = async (req, res) => {
             completedCourses: completed_courses  
           });
     }
-   
-   
   } catch (err) {
     console.log(err, "errrrrrr");
     return res.status(500).json({
@@ -170,6 +156,3 @@ module.exports.student_courses = async (req, res) => {
     });
   }
 };
-
-
-//delete courses

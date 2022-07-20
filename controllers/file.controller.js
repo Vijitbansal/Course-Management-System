@@ -5,7 +5,6 @@ const User = require("../models/user");
 
 
 const upload = async (req, res) => {
-  console.log("AAGYA");
   try {
     await uploadFile(req, res);
     if(res.status(200)){
@@ -32,6 +31,7 @@ const upload = async (req, res) => {
   }
 };
 
+//view all submissions against an assignment
 const getListFiles = async (req, res) => {
   try{
     const {assignment_id} = req.body
@@ -73,9 +73,6 @@ const update_grade = async (req, res) => {
   console.log("Arrivedddd");
   try{
     const is_valid_user = req.user;
-    // console.log(req, "----------");
-    console.log(is_valid_user, "+++++++++++");
-    // console.log(is_valid_user,"#####");
     if (is_valid_user.type != "EDUCATOR") {
       return res.status(403).json({
         message: "Only educators can create course",
@@ -102,8 +99,6 @@ const update_grade = async (req, res) => {
     return;
   }
 };
-
-
 
 module.exports = {
   upload,
