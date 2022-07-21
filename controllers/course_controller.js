@@ -16,12 +16,12 @@ module.exports.create = async (req, res) => {
     }
     const { name, description, capacity, start_date, end_date } = req.body;
     let newCourse = await Course.create({
-      name,
-      description,
-      capacity,
-      start_date,
-      // students_enrolled:"1",
-      end_date,
+      name:req.body.name,
+      description:req.body.description,
+      capacity:req.body.capacity,
+      start_date:req.body.start_date,
+      end_date:req.body.end_date,
+      educator_id:req.user.id
     });
     return res.status(201).json({
       message: "Course created successfully",

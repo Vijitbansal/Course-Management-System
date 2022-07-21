@@ -54,7 +54,7 @@ module.exports.login = async function (req, res) {
             return res.status(400).json({ msg: "Invalid credentials." });
         }
         const secret="secret";
-        const token = jwt.sign({ id: existUser.id }, secret , {expiresIn:'2h'});
+        const token = jwt.sign({ id: existUser.id }, secret);
         return res.json({ token, user: { id: existUser.id, name: existUser.name } });
 
     } catch (err) {
@@ -105,8 +105,8 @@ module.exports.delete = async function (req, res) {
                 message:"You don't have permission to delete this user"
             })
         }
-        const { id } = req.param;
-        const existUser = await User.deleteOne({ id });
+        const id  = req.params.id;
+        const existUser = await User.findByIdAndRemove( id );
         if (!existUser) {
             return res.status(400).json({ msg: "User does not exist" });
         }
